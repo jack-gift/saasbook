@@ -1,0 +1,30 @@
+-#  This file is app/views/movies/index.html.haml
+%h1 All Movies
+
+-#seems like have to use hidden field to pass sort query string to submit action
+= form_tag movies_path, :method => :get do
+  Include: 
+  - @all_ratings.each do |rating|
+    = rating
+    = check_box_tag "ratings[#{rating}]", "1",  @checked_ratings.include?(rating), {:id => "ratings_#{rating}"}
+  = hidden_field_tag 'sort', @sort
+  = submit_tag 'Refresh', :id=>"ratings_submit"
+  
+%table#movies
+  %thead
+    %tr
+      -# no space after between %th and = ==> "%th= " otherwise link_to does not work
+      %th{:class=>@title_hilite}= link_to 'Movie Title', movies_path(:sort => "title", :ratings => @checked_ratings), :id=>"title_header"
+      %th Rating
+      %th{:class=>@reldat_hilite}= link_to 'Release Date', movies_path(:sort => "release_date", :ratings => @checked_ratings), :id=>"release_date_header"
+      %th Rating
+      %th More Info
+  %tbody
+    - @movies.each do |movie|
+      %tr
+        %td= movie.title 
+        %td= movie.rating
+        %td= movie.release_date
+        %td= link_to "More about #{movie.title}", movie_path(movie)
+
+= link_to 'Add new movie', new_movie_path

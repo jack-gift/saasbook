@@ -1,0 +1,9 @@
+1. remove public/index.html
+
+2. edit routes.rb
+
+
+3. rails generate migration CreateMovies
+
+rake db:migrate
+
