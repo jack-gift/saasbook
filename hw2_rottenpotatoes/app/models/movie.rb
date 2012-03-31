@@ -4,9 +4,6 @@ class Movie < ActiveRecord::Base
 #  def <=>(other)
 #    self.release_date <=> other.release_date
 #  end
-  def initialize()
-    
-  end
   
   @@all_ratings = ['G', 'PG', 'PG-13', 'R']
   def self.all_ratings
