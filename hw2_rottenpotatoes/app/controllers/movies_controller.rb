@@ -7,11 +7,52 @@ class MoviesController < ApplicationController
   end
 
   def index
+    #when do i need redirect_to? 
+    #1. user didn't commit new filter settings, params has no filter, and session has filter settings
+    #2. no sort in params, but sesssion has it
+    @redirect_ratings = false
+    @redirect_sort = false
+    @checked_ratings = []
+    @sort = []
+    
+    if (params[:commit].nil? and params[:ratings].nil? and !session[:checked_ratings].nil?) 
+      @checked_ratings = session[:checked_ratings]
+      @redirect_ratings = true
+    end
+    
+
+    #new ratings filter setting
+    if !params[:commit].nil? 
+      if !params[:ratings].nil?
+        @checked_ratings = params[:ratings]
+        session[:checked_ratings] = params[:ratings] 
+      else
+        session.delete(:checked_ratings) 
+      end  
+    else
+      @checked_ratings = params[:ratings] unless params[:ratings].nil?
+    end
+    
+    
+    if  (params[:sort].nil? and !session[:sort].nil?)
+      @sort = session[:sort]
+      @redirect_sort = true
+    end
+        
+        
+    if !params[:sort].nil?   #use sort from sessions
+       session[:sort] = params[:sort]
+       @sort = params[:sort]
+    end
+
+    if @redirect_ratings or @redirect_sort
+      redirect_to :sort => @sort, :ratings => @checked_ratings
+    end
+  
+
+
     @all_ratings = Movie.all_ratings
-    @checked_ratings=[]
-    @sort = params[:sort]
-    if !params[:ratings].nil?
-      @checked_ratings = params[:ratings]
+    if !@checked_ratings.nil? and @checked_ratings.length>0
       if @sort.nil?
         @movies = Movie.find(:all, :conditions => {:rating => @checked_ratings.keys})
       else
